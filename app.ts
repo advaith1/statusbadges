@@ -12,7 +12,7 @@ import 'npm:bufferutil@^4.0.7'
 import { makeBadge } from 'npm:badge-maker@^3.3.1'
 
 import logos from './logos.json' assert { type: 'json' }
-const { vscode, intellij, spotify } = logos
+const { vscode, intellij, spotify, crunchyroll } = logos
 
 const rest = new REST().setToken(env.TOKEN)
 
@@ -182,6 +182,30 @@ app.get('/badge/spotify/:id', c => {
 
 	if (!['social', 'for-the-badge'].includes(style) && c.req.query('hideLogo') !== 'true')
 		badge = injectLogo(badge, spotify)
+
+	return c.body(badge)
+})
+
+app.get('/badge/crunchyroll/:id', c => {
+	const activity = presences.get(c.req.param('id'))?.activities?.find(a => a.type === ActivityType.Watching && a.name === 'Crunchyroll' && a.details && a.state)
+
+	c.header('Content-Type', 'image/svg+xml; charset=utf-8')
+	c.header('Cache-Control', 'max-age=0, no-cache, no-store, must-revalidate')
+
+	const style = resolveStyle(c.req.query('style'))
+
+	let badge = makeBadge({
+		label: c.req.query('label') ?? 'watching',
+		message: activity && activity.details && activity.state
+			? activity.details
+			: c.req.query('fallback') ?? 'nothing rn',
+			labelColor: c.req.query('labelColor') ?? 'gray',
+			color: c.req.query('color') ?? '#f47521',
+		style
+	})
+
+	if (!['social', 'for-the-badge'].includes(style) && c.req.query('hideLogo') !== 'true')
+		badge = injectLogo(badge, crunchyroll)
 
 	return c.body(badge)
 })
