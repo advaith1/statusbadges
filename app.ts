@@ -187,7 +187,7 @@ app.get('/badge/spotify/:id', c => {
 })
 
 app.get('/badge/crunchyroll/:id', c => {
-	const activity = presences.get(c.req.param('id'))?.activities?.find(a => a.type === ActivityType.Watching && a.name === 'Crunchyroll' && a.details && a.state)
+	const activity = presences.get(c.req.param('id'))?.activities?.find(a => a.type === ActivityType.Watching && a.name === 'Crunchyroll' && a.details)
 
 	c.header('Content-Type', 'image/svg+xml; charset=utf-8')
 	c.header('Cache-Control', 'max-age=0, no-cache, no-store, must-revalidate')
@@ -196,7 +196,7 @@ app.get('/badge/crunchyroll/:id', c => {
 
 	let badge = makeBadge({
 		label: c.req.query('label') ?? 'watching',
-		message: activity && activity.details && activity.state
+		message: activity && activity.details
 			? activity.details
 			: c.req.query('fallback') ?? 'nothing rn',
 			labelColor: c.req.query('labelColor') ?? 'gray',
