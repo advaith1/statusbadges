@@ -175,8 +175,8 @@ app.get('/badge/spotify/:id', c => {
 		message: activity && activity.details && activity.state
 			? `${activity.details.replace(/\(.*\)/g, '')} by ${formatter.format(activity.state.split('; '))}`
 			: c.req.query('fallback') ?? 'nothing rn',
-			labelColor: c.req.query('labelColor') ?? 'gray',
-			color: c.req.query('color') ?? '#1db954',
+		labelColor: c.req.query('labelColor') ?? 'gray',
+		color: c.req.query('color') ?? '#1db954',
 		style
 	})
 
@@ -199,8 +199,8 @@ app.get('/badge/crunchyroll/:id', c => {
 		message: activity && activity.details
 			? activity.details
 			: c.req.query('fallback') ?? 'nothing rn',
-			labelColor: c.req.query('labelColor') ?? 'gray',
-			color: c.req.query('color') ?? '#f47521',
+		labelColor: c.req.query('labelColor') ?? 'gray',
+		color: c.req.query('color') ?? '#f47521',
 		style
 	})
 
@@ -211,6 +211,7 @@ app.get('/badge/crunchyroll/:id', c => {
 })
 
 app.get('/presence/:id', c => {
+	c.header('Access-Control-Allow-Origin', '*')
 	const presence = presences.get(c.req.param('id'))
 	if (!presence) return c.json({ status: PresenceUpdateStatus.Offline, client_status: {}, activities: [] })
 	return c.json({ ...presence, user: undefined })
